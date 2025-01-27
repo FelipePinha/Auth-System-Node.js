@@ -1,0 +1,12 @@
+version: '3'
+name: auth-system
+
+services:
+  pg:
+    image: bitnami/postgresql:14.13.0
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=auth
