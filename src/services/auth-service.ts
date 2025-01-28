@@ -4,24 +4,6 @@ import { queryRunner } from '../lib/query-runner'
 import jwt from 'jsonwebtoken'
 
 export class AuthService {
-    async register(data: {name: string, email: string, password: string}) {
-        const { name, email, password } = data
-        
-        
-        await queryRunner.startTransaction()
-        try {
-            const hashedPassword = bcrypt.hashSync(password, 10)
-
-            const user = await queryRunner.manager.save(User, {name, email, password: hashedPassword})
-
-            await queryRunner.commitTransaction()
-            return user
-        } catch (e) {
-            await queryRunner.rollbackTransaction()
-            throw e
-        }
-    }
-
     async login(data: {email: string, password: string}) {
         const { email, password } = data
 

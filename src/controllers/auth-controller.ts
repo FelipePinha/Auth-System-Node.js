@@ -1,9 +1,8 @@
 import { Router } from "express";
 import { AuthService } from "../services/auth-service";
+import { UserService } from "../services/user-service";
 
 export const authRoutes = Router()
-
-const authService = new AuthService()
 
 authRoutes.post('/register', async (req, res) => {
     const { name, email, password } = req.body
@@ -13,7 +12,8 @@ authRoutes.post('/register', async (req, res) => {
         return
     }
 
-    const user = await authService.register({name, email, password})
+    const userService = new UserService()
+    const user = await userService.register({name, email, password})
 
     res.status(201).json({name: user?.name, email: user?.email, createdAt: user?.createdAt})
 })
@@ -25,8 +25,15 @@ authRoutes.post('/login', async (req, res) => {
         res.status(400).json({message: 'Field is missing'})
         return
     }
-    
+
+    const authService = new AuthService()
     const loggedUser = await authService.login({ email, password })
 
     res.json(loggedUser)
+})
+
+authRoutes.get('/random', (req, res) => {
+    const password = UserService.generateRadomPassword()
+
+    res.json({ password })
 })

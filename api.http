@@ -15,3 +15,9 @@ Content-Type: application/json
     "email": "felipe@test.com",
     "password": "123456"
 }
+
+
+###
+
+GET http://localhost:3000/auth/random
+Content-Type: application/json
