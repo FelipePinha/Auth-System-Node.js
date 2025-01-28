@@ -1,6 +1,8 @@
 import { queryRunner } from "../lib/query-runner"
 import { User } from '../entities/User'
 import bcrypt from 'bcrypt'
+import { transporter } from "../lib/nodemailer"
+import jwt from 'jsonwebtoken'
 
 export class UserService {
     async register(data: {name: string, email: string, password: string}) {
@@ -42,5 +44,35 @@ export class UserService {
         }
 
         return password
+    }
+
+    async forgotPassword(email: string) {
+        try {
+            const user = await queryRunner.manager.findBy(User, {
+                email
+            })
+
+            if(user.length === 0) {
+                return {
+                    status: 400,
+                    message: 'User not found'
+                }
+            }
+
+            const token = jwt.sign({email}, String(process.env.JWT_PASS), { expiresIn: '1h' })
+
+            await transporter.sendMail({
+                to: email,
+                subject: 'Reset Password',
+                html: `<h1>Copy the token to reset your password</h1><p>${token}</p>`
+            })
+
+            return {
+                status: 200,
+                message: 'Email sent'
+            }
+        } catch (e) {
+            throw e
+        }
     }
 }
