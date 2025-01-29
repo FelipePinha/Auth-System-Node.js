@@ -30,3 +30,12 @@ userRoutes.post('/password/forgot', async (req, res) => {
 
     res.status(response.status).json({message: response.message})
 })
+
+userRoutes.post('/password/reset/:token', async (req, res) => {
+    const { token } = req.params
+    const { password } = req.body
+
+    const response = await userService.resetPassword(password, token)
+
+    res.json(response)
+})

@@ -75,4 +75,33 @@ export class UserService {
             throw e
         }
     }
+
+    async resetPassword(password: string, token: string) {
+        queryRunner.startTransaction()
+        try {
+            const decode = jwt.verify(token, process.env.JWT_PASS!) as { email: string }
+
+            const user = await queryRunner.manager.findOne(User, {
+                where: {
+                    email: String(decode.email)
+                }
+            })
+
+            if(!user) {
+                throw new Error('User not found')
+            }
+
+            const hashedPassword = bcrypt.hashSync(password, 10)
+
+            await queryRunner.manager.update(User, user.id, { password: hashedPassword })
+            queryRunner.commitTransaction()
+            
+            return {
+                message: 'Password updated'
+            }
+        } catch (e) {
+            queryRunner.rollbackTransaction()
+            throw e
+        }
+    }
 }

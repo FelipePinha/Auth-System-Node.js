@@ -2,8 +2,8 @@ POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-    "email": "felipe@test.com",
-    "password": "123456"
+    "email": "felipe_pc7@hotmail.com",
+    "password": "654321"
 }
 
 ###
@@ -29,4 +29,13 @@ Content-Type: application/json
 
 {
     "email": "felipe_pc7@hotmail.com"
+}
+
+###
+
+POST http://localhost:3000/user/password/reset/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGlwZV9wYzdAaG90bWFpbC5jb20iLCJpYXQiOjE3MzgxNzUyNzIsImV4cCI6MTczODE3ODg3Mn0.Gh6Y2RO3WHgTbrlGMdDkheywyrGJ-j0keCLw1Xe4QUY
+Content-Type: application/json
+
+{
+    "password": "654321"
 }
