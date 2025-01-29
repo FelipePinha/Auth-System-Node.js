@@ -3,6 +3,7 @@ import { User } from '../entities/User'
 import bcrypt from 'bcrypt'
 import { transporter } from "../lib/nodemailer"
 import jwt from 'jsonwebtoken'
+import { EmailService } from "./email-service"
 
 export class UserService {
     async register(data: {name: string, email: string, password: string}) {
@@ -23,7 +24,7 @@ export class UserService {
         }
     }
     
-    static generateRadomPassword() {
+    generateRadomPassword() {
         const length = 8
         const lowerCaseChars = 'abcdefghijklmnopqrstuvwyz'
         const upperCaseChars = lowerCaseChars.toUpperCase()
@@ -32,11 +33,7 @@ export class UserService {
 
         const charString = lowerCaseChars + upperCaseChars + numbers + symbols
         
-        let password = ''
-        
-        password += upperCaseChars[Math.floor(Math.random() * upperCaseChars.length)]
-        password += numbers[Math.floor(Math.random() * numbers.length)]
-        password += symbols[Math.floor(Math.random() * symbols.length)]
+        let password = this.joinRequiredChars(upperCaseChars, numbers, symbols)
 
         for(let i = password.length; i < length; i++) {
             const randomIndex = Math.floor(Math.random() * charString.length)
@@ -44,6 +41,14 @@ export class UserService {
         }
 
         return password
+    }
+
+    private joinRequiredChars(upperCaseChars: string, numbers: string, symbols: string): string {
+        const upperCaseChar = upperCaseChars[Math.floor(Math.random() * upperCaseChars.length)]
+        const number = numbers[Math.floor(Math.random() * numbers.length)]
+        const symbol = symbols[Math.floor(Math.random() * symbols.length)]
+
+        return upperCaseChar + number + symbol
     }
 
     async forgotPassword(email: string) {
@@ -61,11 +66,7 @@ export class UserService {
 
             const token = jwt.sign({email}, String(process.env.JWT_PASS), { expiresIn: '1h' })
 
-            await transporter.sendMail({
-                to: email,
-                subject: 'Reset Password',
-                html: `<h1>Copy the token to reset your password</h1><p>${token}</p>`
-            })
+            await EmailService.sendMail(email, token)
 
             return {
                 status: 200,

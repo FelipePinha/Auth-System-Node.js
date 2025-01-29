@@ -18,7 +18,7 @@ userRoutes.post('/register', async (req, res) => {
 })
 
 userRoutes.get('/password/random', (req, res) => {
-    const password = UserService.generateRadomPassword()
+    const password = userService.generateRadomPassword()
 
     res.json({ password })
 })
