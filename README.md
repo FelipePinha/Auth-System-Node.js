@@ -1,4 +1,4 @@
-# URL SHORTENER
+# Sistema de Autenticação Node.js
 
 ## Requisitos
 
@@ -10,6 +10,13 @@ Para rodar o projeto é necessário ter:
   <li><a href='https://www.docker.com/'>Docker</a></li>
   <li><a href='https://git-scm.com/'>Git</a></li>
 </ul>
+
+## Funcionalidades
+
+- Criar usuário
+- Login de usuário
+- Gerar senha aleatória
+- Recuperar senha
 
 ## Instalação
 
