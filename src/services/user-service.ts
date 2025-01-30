@@ -1,14 +1,13 @@
 import { queryRunner } from "../lib/query-runner"
 import { User } from '../entities/User'
 import bcrypt from 'bcrypt'
-import { transporter } from "../lib/nodemailer"
 import jwt from 'jsonwebtoken'
 import { EmailService } from "./email-service"
+import { UserModel } from "../models/user-model"
 
 export class UserService {
     async register(data: {name: string, email: string, password: string}) {
         const { name, email, password } = data
-        
         
         await queryRunner.startTransaction()
         try {
@@ -53,15 +52,10 @@ export class UserService {
 
     async forgotPassword(email: string) {
         try {
-            const user = await queryRunner.manager.findBy(User, {
-                email
-            })
+            const user = await UserModel.findByEmail(email)
 
-            if(user.length === 0) {
-                return {
-                    status: 400,
-                    message: 'User not found'
-                }
+            if(!user) {
+                throw new Error('User not found')
             }
 
             const token = jwt.sign({email}, String(process.env.JWT_PASS), { expiresIn: '1h' })
@@ -69,7 +63,6 @@ export class UserService {
             await EmailService.sendMail(email, token)
 
             return {
-                status: 200,
                 message: 'Email sent'
             }
         } catch (e) {
@@ -82,11 +75,7 @@ export class UserService {
         try {
             const decode = jwt.verify(token, process.env.JWT_PASS!) as { email: string }
 
-            const user = await queryRunner.manager.findOne(User, {
-                where: {
-                    email: String(decode.email)
-                }
-            })
+            const user = await UserModel.findByEmail(decode.email)
 
             if(!user) {
                 throw new Error('User not found')

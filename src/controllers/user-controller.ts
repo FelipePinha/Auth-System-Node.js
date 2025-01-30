@@ -28,7 +28,7 @@ userRoutes.post('/password/forgot', async (req, res) => {
 
     const response = await userService.forgotPassword(email)
 
-    res.status(response.status).json({message: response.message})
+    res.json(response)
 })
 
 userRoutes.post('/password/reset/:token', async (req, res) => {

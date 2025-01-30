@@ -11,5 +11,5 @@ AppDataSource.initialize()
         app.use('/auth', authRoutes)
         app.use('/user', userRoutes)
 
-        app.listen(3000, () => console.log('servidor rodando meu nobre'))
+        app.listen(3000, () => console.log('Server running'))
     })
